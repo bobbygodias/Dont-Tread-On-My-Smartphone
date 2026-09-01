@@ -5,7 +5,7 @@ on:
     branches:
       - "feature/launcher-icons-v0.2b"
     paths:
-      - "tools/icon-source/READY"
+      - "tools/icon-source/READY*"
 
 permissions:
   contents: write
@@ -20,15 +20,21 @@ jobs:
           ref: feature/launcher-icons-v0.2b
           fetch-depth: 0
 
+      - name: Verify staged source chunks
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "ef4ef62eea48a7717617b534e5a3eb28f767a0efb91a5ec898418aac2cddafb7  tools/icon-source/legacy/000.b64" | sha256sum -c -
+          echo "f1b9b3bc854d8af3d9148bbdb801c6b598f550f968c4fa56ff6ee60c060b63cc  tools/icon-source/legacy/001.b64" | sha256sum -c -
+          echo "ce4c34fe33898fcebf19340b49ba1c57b995a7fa6e11ede3d19324ddea98ff41  tools/icon-source/legacy/002.b64" | sha256sum -c -
+          echo "6b4378d9537ef459d97d11681ec03915d45e60f6f263710a5fe05b7104d11896  tools/icon-source/legacy/003.b64" | sha256sum -c -
+
       - name: Rebuild source PNG
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p build/icon-work
           cat tools/icon-source/legacy/*.b64 | tr -d '\n\r' | base64 -d > build/icon-work/ic_launcher_source.png
-          echo "Expected SHA256: 91e54291a4e04382e9fb8ebb114ffc3d3ff302a5c5d056d7fa1a8f3ffbe49c83"
-          echo "Actual:"
-          sha256sum build/icon-work/ic_launcher_source.png
           echo "91e54291a4e04382e9fb8ebb114ffc3d3ff302a5c5d056d7fa1a8f3ffbe49c83  build/icon-work/ic_launcher_source.png" | sha256sum -c -
           file build/icon-work/ic_launcher_source.png
 
