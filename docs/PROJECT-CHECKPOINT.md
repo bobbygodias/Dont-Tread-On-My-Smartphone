@@ -145,6 +145,18 @@ PR:
 
 ```text
 #2 — app: add v0.2 owner controls
+merge: e5e13c64617f9c0a5a95d3447a8cdcf3a2de264c
+```
+
+CI final da `main`:
+
+```text
+run #6
+workflow run id: 33530518551
+resultado: success
+artifact: dont-tread-on-my-smartphone-debug
+artifact id: 9809548174
+sha256 do ZIP: dbe07f86f3dd50360a263c12bf76103a7f2599fb1e94581f25a579c8377d182c
 ```
 
 O GitHub Actions executou:
@@ -153,7 +165,7 @@ O GitHub Actions executou:
 gradle --no-daemon :app:assembleDebug
 ```
 
-e o passo **Compile Dont-Tread-On-My-Smartphone** concluiu com sucesso, seguido de upload do APK.
+e o passo **Compile Dont-Tread-On-My-Smartphone** concluiu com sucesso, seguido de upload do APK. O mesmo build passou primeiro no HEAD do PR e novamente na `main` após o merge.
 
 ---
 
