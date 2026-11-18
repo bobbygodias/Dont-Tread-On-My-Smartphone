@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ShellUserService extends IControlService.Stub {
 
@@ -37,6 +38,7 @@ public class ShellUserService extends IControlService.Stub {
                     .start();
 
             ByteArrayOutputStream capture = new ByteArrayOutputStream();
+            AtomicBoolean truncated = new AtomicBoolean(false);
             Process finalProcess = process;
             Thread drain = new Thread(() -> {
                 try (InputStream in = finalProcess.getInputStream()) {
@@ -48,6 +50,11 @@ public class ShellUserService extends IControlService.Stub {
                             int store = Math.min(read, MAX_CAPTURE - totalStored);
                             capture.write(buffer, 0, store);
                             totalStored += store;
+                            if (store < read) {
+                                truncated.set(true);
+                            }
+                        } else {
+                            truncated.set(true);
                         }
                     }
                 } catch (Throwable ignored) {
@@ -62,7 +69,7 @@ public class ShellUserService extends IControlService.Stub {
             drain.join(2500);
 
             String output = new String(capture.toByteArray(), StandardCharsets.UTF_8);
-            if (capture.size() >= MAX_CAPTURE) {
+            if (truncated.get()) {
                 output += "\n[saída truncada em 128 KiB]";
             }
             output += finished
