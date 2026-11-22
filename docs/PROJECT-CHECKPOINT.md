@@ -214,3 +214,19 @@ Antes de qualquer mudança grande:
 ---
 
 **Soberania ≠ Dont-Tread-On-My-Smartphone.**
+
+---
+
+## 22/11/2026 — Integração pendente de validação MEGA3 Split Rescue
+
+**Origem:** `bobbygodias/MEGA3-Split-Rescue`, release/protótipo 0.3-debug, issue #1 não resolvida.  
+**Destino canônico futuro:** `bobbygodias/Dont-Tread-On-My-Smartphone`, módulo integrado na branch `feature/mega3-split-integration-20261122`.
+
+O MEGA 3 funcionava normalmente com tela dividida antes de uma falha repentina; segundo Bobby, não houve atualização de DokeOS/Android. Não atribuir a falha automaticamente ao fabricante. Testes e o apk debug anteriores **não restauraram** a funcionalidade. A incorporação foi solicitada explicitamente por Bobby em 22/11/2026.
+
+Foi iniciado um porte que aproveita comandos do MEGA3 no ShellUserService do Dont-Tread, adiciona diagnóstico de multi-janela, confirmação de ajustes, serviço de acessibilidade opcional sem leitura de conteúdo e registro local. Importação de código ≠ funcionamento comprovado. Preservar os repositórios e artefatos antigos, sem sobrescrever o Soberania.
+
+**Gatilho para merge à main:** CI verde, inspeção das permissões e testes reais no Blackview MEGA 3, incluindo aceitação/recusa do alternador, resgate dos modos de janelas, app em horizontal/vertical e split-screen de aplicativos escolhidos. Não alegar êxito por apenas compilar. Ver docs/MEGA3-INTEGRATION.md.
+
+**Pendência distinta:** investigar bootstrap de comandos sem precisar manter serviço Shizuku separado, sem root/formatar/dispositivo externo, sem prometer bypass de restrições normais Android. Não usar apps de terceiros ou credenciais sem avaliação.
+
