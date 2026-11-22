@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Dont-Tread-On-My-Smartphone</string>
     <string name="device_admin_description">Administração opcional do próprio aparelho. Não concede root nem Device Owner automaticamente.</string>
+    <string name="split_rescue_accessibility_description">Alterna a divisão de tela somente quando solicitado. Não lê o conteúdo das janelas nem dados pessoais.</string>
 </resources>
