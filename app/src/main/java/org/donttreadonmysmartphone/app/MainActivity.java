@@ -252,6 +252,23 @@ public class MainActivity extends Activity {
 
         root.addView(button("DIVIDIR A | B", v -> splitSelectedApps()));
 
+        // Integração do resgate MEGA 3: leitura antes de alterações, sem ações automáticas.
+        addHeader(root, "Resgate de divisão de tela — MEGA 3");
+        root.addView(button("Diagnosticar multi-janela (somente leitura)", v ->
+                runShell(mega3SplitDiagnosticCommand())));
+        root.addView(button("Aplicar correções de multi-janela", v ->
+                confirm(
+                        "Alterar configurações de multi-janela?",
+                        "Estas alterações podem afetar o comportamento de aplicativos. " +
+                        "O Android pode recusá-las e elas NÃO garantem a recuperação da tela dividida. " +
+                        "O resultado real ficará no log.",
+                        () -> runShell(mega3SplitRepairCommand()))));
+        root.addView(button("Abrir Acessibilidade para alternador de tela", v ->
+                openSplitAccessibilitySettings()));
+        root.addView(button("Alternar divisão via Acessibilidade", v ->
+                toggleSplitScreenFromAccessibility()));
+
+
         root.addView(button("A: ABRIR EM TELA CHEIA", v ->
                 withLaunchableA(a -> runShell(
                         "am start -W --windowingMode 1 -n " + sq(a.component.flattenToString())))));
@@ -513,6 +530,58 @@ public class MainActivity extends Activity {
                 "dumpsys activity activities 2>/dev/null | grep -E 'mResumedActivity|topResumedActivity|windowingMode' | head -n 60";
 
         runShell(command);
+    }
+
+    // Comandos importados do MEGA3-Split-Rescue v0.3, adaptados ao UserService
+    // existente. O diagnóstico não modifica configurações do aparelho.
+    private String mega3SplitDiagnosticCommand() {
+        return "echo '=== MEGA3 SPLIT: DIAGNOSTICO ==='; " +
+                "id; " +
+                "echo '--- Android / aparelho ---'; " +
+                "getprop ro.product.model; getprop ro.build.version.release; " +
+                "echo '--- suporte multi-janela ---'; " +
+                "am supports-multiwindow 2>&1; " +
+                "am supports-split-screen-multi-window 2>&1; " +
+                "wm get-multi-window-config 2>&1; " +
+                "echo '--- flags globais ---'; " +
+                "settings get global force_resizable_activities; " +
+                "settings get global enable_non_resizable_multi_window; " +
+                "settings get global enable_freeform_support; " +
+                "echo '--- dimensoes ---'; wm size; wm density; " +
+                "echo '--- recursos ---'; " +
+                "getprop ro.config.low_ram; " +
+                "pm has-feature android.software.freeform_window_management 2>&1";
+    }
+
+    // Nenhum comando é executado sem o toque e a confirmação explícitos.
+    private String mega3SplitRepairCommand() {
+        return "echo '=== MEGA3 SPLIT: REPARO SOLICITADO ==='; " +
+                "settings put global force_resizable_activities 1; " +
+                "settings put global enable_non_resizable_multi_window 1; " +
+                "wm set-multi-window-config --supportsNonResizable 1 --respectsActivityMinWidthHeight -1 2>&1; " +
+                "echo '--- verificacao ---'; " +
+                "settings get global force_resizable_activities; " +
+                "settings get global enable_non_resizable_multi_window; " +
+                "wm get-multi-window-config 2>&1";
+    }
+
+    private void openSplitAccessibilitySettings() {
+        try {
+            startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+        } catch (Throwable t) {
+            appendLog("Não foi possível abrir Acessibilidade: " + t);
+            toast("Configuração de Acessibilidade indisponível.");
+        }
+    }
+
+    private void toggleSplitScreenFromAccessibility() {
+        boolean accepted = SplitAccessibilityService.toggleSplitScreen();
+        String message = accepted
+                ? "Android aceitou o pedido de alternar divisão. Confira a tela: não é confirmação de recuperação."
+                : "Ação recusada ou serviço desligado. Ative o alternador nas configurações de Acessibilidade.";
+        appendLog("Alternador split-screen: " + message);
+        if (output != null) output.setText(message);
+        toast(message);
     }
 
     private String diagnosticCommand() {
