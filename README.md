@@ -44,6 +44,19 @@ version:       0.2.0-dev
 
 O projeto é independente do **Soberania**. São aplicativos e repositórios distintos.
 
+## Integração MEGA3 Split Rescue (em validação)
+
+A branch de integração `feature/mega3-split-integration-20261122` incorpora ao aplicativo principal o diagnóstico específico de multi-janela, as flags do Android 15/DokeOS e o alternador opcional por Acessibilidade que existiam no projeto [MEGA3 Split Rescue](https://github.com/bobbygodias/MEGA3-Split-Rescue).
+
+- **O defeito continua aberto**: o Blackview MEGA 3 dividia a tela antes, deixou de fazê-lo sem atualização conhecida, e a v0.3-debug do resgate separado não solucionou a falha.
+- O diagnóstico é **somente leitura**; o reparo exige toque e confirmação e registra os resultados. Nenhum teste no tablet foi realizado por esta integração.
+- O serviço de Acessibilidade não lê janelas e serve apenas para solicitar a ação global de alternar a divisão da tela, mediante acionamento explícito.
+- A integração aproveita o `ShellUserService` do Dont-Tread; **não copia** o motor reflexivo/instável do protótipo separado.
+- A dependência do Shizuku para comandos privilegiados **permanece**. Reduzi-la exige investigação adicional; a ação de Acessibilidade pode ser usada sem Shizuku após ativação voluntária pelo usuário.
+- Este trabalho não está pronto para instalação: deve passar pelo CI e por testes reais de interface, comportamento, permissões e reversibilidade.
+
+Detalhes: [docs/MEGA3-INTEGRATION.md](docs/MEGA3-INTEGRATION.md). Os originais continuam preservados nos dois repositórios até validação; não existe migração/apagamento automático do app anterior.
+
 ## Aviso importante
 
 Este software pode alterar configurações relevantes do Android. Algumas mudanças podem interferir no funcionamento de aplicativos ou do sistema.

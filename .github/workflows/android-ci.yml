@@ -37,7 +37,7 @@ jobs:
           java-version: "17"
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Install Android API 36
         run: sdkmanager "platforms;android-36"
@@ -48,7 +48,7 @@ jobs:
           gradle-version: "9.5.0"
 
       - name: Compile Dont-Tread-On-My-Smartphone
-        run: gradle --no-daemon :app:assembleDebug
+        run: gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest
 
       - name: Upload debug APK
         if: success()
