@@ -230,3 +230,7 @@ Foi iniciado um porte que aproveita comandos do MEGA3 no ShellUserService do Don
 
 **Pendência distinta:** investigar bootstrap de comandos sem precisar manter serviço Shizuku separado, sem root/formatar/dispositivo externo, sem prometer bypass de restrições normais Android. Não usar apps de terceiros ou credenciais sem avaliação.
 
+
+## 28/11/2026 — reparo verificável das flags MEGA3
+
+Reparo global passa a capturar valores anteriores, aceitar somente null/0/1, verificar o resultado e tentar rollback com readback quando houver falha. Ajuste do WindowManager permanece disponível em ação separada e confirmação explícita, sem afirmar rollback onde não existe. Testes unitários do contrato e CI Android. Nenhuma operação física, validação no MEGA3 ou release; PR #5 preservado draft.

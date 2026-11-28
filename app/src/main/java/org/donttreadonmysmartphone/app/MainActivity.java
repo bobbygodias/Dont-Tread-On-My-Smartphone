@@ -259,10 +259,14 @@ public class MainActivity extends Activity {
         root.addView(button("Aplicar correções de multi-janela", v ->
                 confirm(
                         "Alterar configurações de multi-janela?",
-                        "Estas alterações podem afetar o comportamento de aplicativos. " +
-                        "O Android pode recusá-las e elas NÃO garantem a recuperação da tela dividida. " +
-                        "O resultado real ficará no log.",
+                        "Serão verificadas duas flags globais. Se a alteração for recusada, " +
+                        "o aplicativo tentará restaurar e conferir os valores anteriores. " +
+                        "Isso NÃO comprova recuperação da tela dividida.",
                         () -> runShell(mega3SplitRepairCommand()))));
+        root.addView(dangerButton("Configuração avançada do WindowManager", v -> confirm(
+                "Modificar WindowManager?",
+                "O Android pode não oferecer este comando. O ajuste é separado das flags e não possui restauração automática. O log mostra a configuração anterior e a posterior.",
+                () -> runShell(SplitRepairCommand.windowManagerOverride()))));
         root.addView(button("Abrir Acessibilidade para alternador de tela", v ->
                 openSplitAccessibilitySettings()));
         root.addView(button("Alternar divisão via Acessibilidade", v ->
@@ -555,14 +559,7 @@ public class MainActivity extends Activity {
 
     // Nenhum comando é executado sem o toque e a confirmação explícitos.
     private String mega3SplitRepairCommand() {
-        return "echo '=== MEGA3 SPLIT: REPARO SOLICITADO ==='; " +
-                "settings put global force_resizable_activities 1; " +
-                "settings put global enable_non_resizable_multi_window 1; " +
-                "wm set-multi-window-config --supportsNonResizable 1 --respectsActivityMinWidthHeight -1 2>&1; " +
-                "echo '--- verificacao ---'; " +
-                "settings get global force_resizable_activities; " +
-                "settings get global enable_non_resizable_multi_window; " +
-                "wm get-multi-window-config 2>&1";
+        return SplitRepairCommand.verifiedFlags();
     }
 
     private void openSplitAccessibilitySettings() {

@@ -48,7 +48,7 @@ jobs:
           gradle-version: "9.5.0"
 
       - name: Compile Dont-Tread-On-My-Smartphone
-        run: gradle --no-daemon :app:assembleDebug
+        run: gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest
 
       - name: Upload debug APK
         if: success()
